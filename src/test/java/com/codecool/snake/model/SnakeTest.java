@@ -74,4 +74,36 @@ class SnakeTest {
 
         assertEquals(2, snake.getBody().size());
     }
+
+    @Test
+    void shouldChangeDirectionToUp() {
+        Snake snake = new Snake(new Position(5, 5), Direction.RIGHT);
+
+        snake.changeDirection(Direction.UP);
+        snake.move(false);
+
+        assertEquals(Direction.UP, snake.getDirection());
+        assertEquals(5, snake.getHead().getX());
+        assertEquals(4, snake.getHead().getY());
+    }
+
+    @Test
+    void shouldNotAllowOppositeDirection() {
+        Snake snake = new Snake(new Position(5, 5), Direction.RIGHT);
+
+        snake.changeDirection(Direction.LEFT);
+
+        assertEquals(Direction.RIGHT, snake.getDirection());
+    }
+
+    @Test
+    void shouldRejectNullDirection() {
+        Snake snake = new Snake(new Position(5, 5), Direction.RIGHT);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> snake.changeDirection(null)
+        );
+    }
+
 }
