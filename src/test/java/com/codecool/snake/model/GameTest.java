@@ -100,4 +100,31 @@ class GameTest {
                 new Random(42)
         );
     }
+
+    @Test
+    void resetShouldRestoreInitialGameState() {
+        Game game = new Game(
+                10,
+                10,
+                new Position(5, 5),
+                Direction.RIGHT,
+                new Position(6, 5),
+                new Random(42)
+        );
+
+        // Eat the food
+        game.tick();
+
+        assertEquals(1, game.getScore());
+        assertEquals(2, game.getSnake().getBody().size());
+
+        game.reset();
+
+        assertEquals(0, game.getScore());
+        assertFalse(game.isGameOver());
+        assertEquals(1, game.getSnake().getBody().size());
+        assertEquals(5, game.getSnake().getHead().getX());
+        assertEquals(5, game.getSnake().getHead().getY());
+        assertEquals(Direction.RIGHT, game.getSnake().getDirection());
+    }
 }
