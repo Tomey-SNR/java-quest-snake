@@ -151,4 +151,12 @@ public class Game {
     public boolean isGameOver() {
         return gameOver;
     }
+
+    public int getBoardWidth() {
+        return boardWidth;
+    }
+
+    public int getBoardHeight() {
+        return boardHeight;
+    }
 }
