@@ -9,39 +9,56 @@ public class Game {
 
     private final int boardWidth;
     private final int boardHeight;
-    private final Snake snake;
+    private final Position startingPosition;
+    private final Direction startingDirection;
     private final Random random;
 
+    private Snake snake;
     private Food food;
     private int score;
-    private boolean gameOver;
+    private GameState state = GameState.START;
 
     public Game(int boardWidth, int boardHeight) {
-        this(boardWidth, boardHeight,
+        this(
+                boardWidth,
+                boardHeight,
                 new Position(boardWidth / 2, boardHeight / 2),
-                Direction.RIGHT, null, new Random());
+                Direction.RIGHT,
+                null,
+                new Random()
+        );
     }
 
-    Game(int boardWidth, int boardHeight,
-         Position startingPosition,
-         Direction direction,
-         Position foodPosition,
-         Random random) {
-
+    Game(
+            int boardWidth,
+            int boardHeight,
+            Position startingPosition,
+            Direction direction,
+            Position foodPosition,
+            Random random
+    ) {
         if (boardWidth <= 0 || boardHeight <= 0) {
-            throw new IllegalArgumentException("Board dimensions must be positive");
+            throw new IllegalArgumentException(
+                    "Board dimensions must be positive"
+            );
         }
 
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
         this.random = Objects.requireNonNull(random);
+
+        this.startingPosition = Objects.requireNonNull(startingPosition);
+        this.startingDirection = Objects.requireNonNull(direction);
+
         this.snake = new Snake(
-                Objects.requireNonNull(startingPosition),
-                Objects.requireNonNull(direction)
+                this.startingPosition,
+                this.startingDirection
         );
 
         if (!isInsideBoard(startingPosition)) {
-            throw new IllegalArgumentException("Snake must start inside the board");
+            throw new IllegalArgumentException(
+                    "Snake must start inside the board"
+            );
         }
 
         this.food = foodPosition == null
@@ -49,27 +66,39 @@ public class Game {
                 : new Food(foodPosition);
 
         if (food != null && !isInsideBoard(food.getPosition())) {
-            throw new IllegalArgumentException("Food must be inside the board");
+            throw new IllegalArgumentException(
+                    "Food must be inside the board"
+            );
         }
 
         if (food != null && isOnSnake(food.getPosition())) {
-            throw new IllegalArgumentException("Food cannot spawn on the snake");
+            throw new IllegalArgumentException(
+                    "Food cannot spawn on the snake"
+            );
+        }
+    }
+
+    public void start() {
+        if (state == GameState.START) {
+            state = GameState.PLAYING;
         }
     }
 
     public void tick() {
-        if (gameOver) {
+        if (state != GameState.PLAYING) {
             return;
         }
 
         Position nextHead = new Position(
-                snake.getHead().getX() + snake.getDirection().getDeltaX(),
-                snake.getHead().getY() + snake.getDirection().getDeltaY()
+                snake.getHead().getX()
+                        + snake.getDirection().getDeltaX(),
+                snake.getHead().getY()
+                        + snake.getDirection().getDeltaY()
         );
 
-        boolean eating = food != null &&
-                nextHead.getX() == food.getPosition().getX() &&
-                nextHead.getY() == food.getPosition().getY();
+        boolean eating = food != null
+                && nextHead.getX() == food.getPosition().getX()
+                && nextHead.getY() == food.getPosition().getY();
 
         snake.move(eating);
 
@@ -78,14 +107,21 @@ public class Game {
             food = generateFood();
 
             if (food == null) {
-                gameOver = true;
+                state = GameState.GAME_OVER;
                 return;
             }
         }
 
         if (!isInsideBoard(snake.getHead()) || hasSelfCollision()) {
-            gameOver = true;
+            state = GameState.GAME_OVER;
         }
+    }
+
+    public void reset() {
+        snake = new Snake(startingPosition, startingDirection);
+        score = 0;
+        state = GameState.START;
+        food = generateFood();
     }
 
     private Food generateFood() {
@@ -130,10 +166,12 @@ public class Game {
         Position head = snake.getHead();
         List<Position> body = snake.getBody();
 
-        return body.stream().skip(1).anyMatch(segment ->
-                segment.getX() == head.getX()
-                        && segment.getY() == head.getY()
-        );
+        return body.stream()
+                .skip(1)
+                .anyMatch(segment ->
+                        segment.getX() == head.getX()
+                                && segment.getY() == head.getY()
+                );
     }
 
     public Snake getSnake() {
@@ -148,8 +186,12 @@ public class Game {
         return score;
     }
 
+    public GameState getState() {
+        return state;
+    }
+
     public boolean isGameOver() {
-        return gameOver;
+        return state == GameState.GAME_OVER;
     }
 
     public int getBoardWidth() {
