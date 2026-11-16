@@ -2,11 +2,13 @@ package com.codecool.snake.controller;
 
 import com.codecool.snake.model.Direction;
 import com.codecool.snake.model.Game;
+import com.codecool.snake.model.GameState;
 import com.codecool.snake.view.GamePanel;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -16,7 +18,7 @@ public class GameController {
 
     private final Game game;
     private final GamePanel gamePanel;
-    private final Timer gameTimer;
+    private final Timer timer;
 
     private boolean paused;
 
@@ -24,57 +26,38 @@ public class GameController {
         this.game = game;
         this.gamePanel = gamePanel;
 
-        this.gameTimer = new Timer(150, event -> updateGame());
+        this.timer = new Timer(150, event -> updateGame());
 
-        configureKeyBindings();
-        gameTimer.start();
+        setupKeyBindings();
     }
 
-    private void updateGame() {
-        if (paused || game.isGameOver()) {
-            gameTimer.stop();
-            gamePanel.repaint();
-            return;
-        }
-
-        game.tick();
-        gamePanel.repaint();
-
-        if (game.isGameOver()) {
-            gameTimer.stop();
-        }
-    }
-
-    private void configureKeyBindings() {
+    private void setupKeyBindings() {
         InputMap inputMap = gamePanel.getInputMap(
-                GamePanel.WHEN_IN_FOCUSED_WINDOW
+                JComponent.WHEN_IN_FOCUSED_WINDOW
         );
 
         ActionMap actionMap = gamePanel.getActionMap();
 
+        bindKey(inputMap, actionMap, KeyEvent.VK_SPACE,
+                "start", this::startGame);
+
         bindKey(inputMap, actionMap, KeyEvent.VK_UP,
-                "moveUp", Direction.UP);
+                "up", () -> changeDirection(Direction.UP));
 
         bindKey(inputMap, actionMap, KeyEvent.VK_DOWN,
-                "moveDown", Direction.DOWN);
+                "down", () -> changeDirection(Direction.DOWN));
 
         bindKey(inputMap, actionMap, KeyEvent.VK_LEFT,
-                "moveLeft", Direction.LEFT);
+                "left", () -> changeDirection(Direction.LEFT));
 
         bindKey(inputMap, actionMap, KeyEvent.VK_RIGHT,
-                "moveRight", Direction.RIGHT);
+                "right", () -> changeDirection(Direction.RIGHT));
 
-        inputMap.put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_P, 0),
-                "pause"
-        );
+        bindKey(inputMap, actionMap, KeyEvent.VK_P,
+                "pause", this::togglePause);
 
-        actionMap.put("pause", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                togglePause();
-            }
-        });
+        bindKey(inputMap, actionMap, KeyEvent.VK_R,
+                "restart", this::restartGame);
     }
 
     private void bindKey(
@@ -82,7 +65,7 @@ public class GameController {
             ActionMap actionMap,
             int keyCode,
             String actionName,
-            Direction direction
+            Runnable action
     ) {
         inputMap.put(
                 KeyStroke.getKeyStroke(keyCode, 0),
@@ -92,15 +75,47 @@ public class GameController {
         actionMap.put(actionName, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                if (!paused && !game.isGameOver()) {
-                    game.getSnake().changeDirection(direction);
-                }
+                action.run();
             }
         });
     }
 
+    private void startGame() {
+        if (game.getState() != GameState.START) {
+            return;
+        }
+
+        game.start();
+        paused = false;
+        gamePanel.setPaused(false);
+
+        timer.start();
+        gamePanel.repaint();
+    }
+
+    private void changeDirection(Direction direction) {
+        if (game.getState() != GameState.PLAYING || paused) {
+            return;
+        }
+
+        game.getSnake().changeDirection(direction);
+    }
+
+    private void updateGame() {
+        if (paused || game.getState() != GameState.PLAYING) {
+            return;
+        }
+
+        game.tick();
+        gamePanel.repaint();
+
+        if (game.getState() == GameState.GAME_OVER) {
+            timer.stop();
+        }
+    }
+
     private void togglePause() {
-        if (game.isGameOver()) {
+        if (game.getState() != GameState.PLAYING) {
             return;
         }
 
@@ -109,11 +124,25 @@ public class GameController {
         gamePanel.setPaused(paused);
 
         if (paused) {
-            gameTimer.stop();
+            timer.stop();
         } else {
-            gameTimer.start();
+            timer.start();
         }
 
+        gamePanel.repaint();
+    }
+
+    private void restartGame() {
+        if (game.getState() != GameState.GAME_OVER) {
+            return;
+        }
+
+        timer.stop();
+        paused = false;
+
+        game.reset();
+
+        gamePanel.setPaused(false);
         gamePanel.repaint();
     }
 }
