@@ -16,7 +16,7 @@ public class Game {
     private Snake snake;
     private Food food;
     private int score;
-    private boolean gameOver;
+    private GameState state = GameState.START;
 
     public Game(int boardWidth, int boardHeight) {
         this(
@@ -78,8 +78,14 @@ public class Game {
         }
     }
 
+    public void start() {
+        if (state == GameState.START) {
+            state = GameState.PLAYING;
+        }
+    }
+
     public void tick() {
-        if (gameOver) {
+        if (state != GameState.PLAYING) {
             return;
         }
 
@@ -101,20 +107,20 @@ public class Game {
             food = generateFood();
 
             if (food == null) {
-                gameOver = true;
+                state = GameState.GAME_OVER;
                 return;
             }
         }
 
         if (!isInsideBoard(snake.getHead()) || hasSelfCollision()) {
-            gameOver = true;
+            state = GameState.GAME_OVER;
         }
     }
 
     public void reset() {
         snake = new Snake(startingPosition, startingDirection);
         score = 0;
-        gameOver = false;
+        state = GameState.START;
         food = generateFood();
     }
 
@@ -180,8 +186,12 @@ public class Game {
         return score;
     }
 
+    public GameState getState() {
+        return state;
+    }
+
     public boolean isGameOver() {
-        return gameOver;
+        return state == GameState.GAME_OVER;
     }
 
     public int getBoardWidth() {
