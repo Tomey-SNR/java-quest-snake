@@ -42,6 +42,13 @@ public class GamePanel extends JPanel {
         if (game.isGameOver()) {
             drawGameOver(graphics);
         }
+
+        if (paused) {
+            graphics.setColor(Color.WHITE);
+            graphics.setFont(new Font("Arial", Font.BOLD, 30));
+            graphics.drawString("PAUSED", getWidth() / 2 - 65,
+                    getHeight() / 2);
+        }
     }
 
     private void drawSnake(Graphics graphics) {
@@ -95,5 +102,11 @@ public class GamePanel extends JPanel {
                 (getWidth() - messageWidth) / 2,
                 getHeight() / 2
         );
+    }
+
+    private boolean paused;
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }
