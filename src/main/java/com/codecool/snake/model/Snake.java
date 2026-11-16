@@ -6,7 +6,7 @@ import java.util.List;
 public class Snake {
 
     private final LinkedList<Position> body;
-    private final Direction direction;
+    private Direction direction;
 
     public Snake(Position startingPosition, Direction direction) {
         this.body = new LinkedList<>();
@@ -36,6 +36,20 @@ public class Snake {
 
         if (!grow) {
             body.removeLast();
+        }
+    }
+
+    public void changeDirection(Direction newDirection) {
+        if (newDirection == null) {
+            throw new IllegalArgumentException("Direction cannot be null");
+        }
+
+        boolean isOppositeDirection =
+                direction.getDeltaX() + newDirection.getDeltaX() == 0
+                        && direction.getDeltaY() + newDirection.getDeltaY() == 0;
+
+        if (!isOppositeDirection) {
+            direction = newDirection;
         }
     }
 }
