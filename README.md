@@ -110,24 +110,58 @@ Before running the project, make sure you have:
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+### Prerequisites
+
+Make sure the following tools are installed:
+
+- Java JDK
+- Apache Maven
+
+Verify your installations:
+
+```bash
+java -version
+mvn -version
+```
+
+### Run the Application
+
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/Tomey-SNR/java-quest-snake.git
 ```
 
-### 2. Navigate to the project directory
+2. Navigate to the project directory:
 
 ```bash
 cd java-quest-snake
 ```
 
-### 3. Run the application
+3. Compile and run the application:
 
 ```bash
+mvn compile exec:java
+```
+
+**Important:** Run `mvn compile exec:java` the first time you launch the application on a fresh checkout. The `compile` goal generates the compiled classes required by `exec:java`.
+
+After modifying the source code, use the same command to compile the latest changes and run the application again.
+
+### Troubleshooting
+
+If `mvn exec:java` fails with a class-not-found error, compile the project first:
+
+```bash
+mvn compile
 mvn exec:java
 ```
 
+Alternatively, execute both goals in one command:
+
+```bash
+mvn compile exec:java
+```
 ## 🧪 Running Tests
 
 The project uses JUnit 5 for automated unit testing.
