@@ -1,5 +1,7 @@
 # 🐍 Java Quest – Snake Edition
 
+![Snake Quest CI](https://github.com/Tomey-SNR/java-quest-snake/actions/workflows/ci.yml/badge.svg)
+
 A classic Snake game built with **Java 21 and Java Swing**.
 
 This project demonstrates object-oriented programming, game logic implementation, graphical user interface development, and automated unit testing.
@@ -54,11 +56,16 @@ This project demonstrates object-oriented programming, game logic implementation
 | JUnit 5 | Unit testing |
 | Git | Version control |
 | GitHub | Source code hosting |
+| GitHub Actions | Continuous Integration |
 
 ## 📂 Project Structure
 
 ```text
 java-quest-snake/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 │
 ├── src/
 │   ├── main/
@@ -108,15 +115,6 @@ Before running the project, make sure you have:
 - Apache Maven
 - Git
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-Make sure the following tools are installed:
-
-- Java JDK
-- Apache Maven
-
 Verify your installations:
 
 ```bash
@@ -124,44 +122,28 @@ java -version
 mvn -version
 ```
 
-### Run the Application
+## 🚀 Getting Started
 
-1. Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Tomey-SNR/java-quest-snake.git
 ```
 
-2. Navigate to the project directory:
+### 2. Navigate to the project directory
 
 ```bash
 cd java-quest-snake
 ```
 
-3. Compile and run the application:
+### 3. Run the application
 
 ```bash
 mvn compile exec:java
 ```
 
-**Important:** Run `mvn compile exec:java` the first time you launch the application on a fresh checkout. The `compile` goal generates the compiled classes required by `exec:java`.
+The `compile` goal compiles the project before the application starts. This is useful when running the project for the first time or after modifying the source code.
 
-After modifying the source code, use the same command to compile the latest changes and run the application again.
-
-### Troubleshooting
-
-If `mvn exec:java` fails with a class-not-found error, compile the project first:
-
-```bash
-mvn compile
-mvn exec:java
-```
-
-Alternatively, execute both goals in one command:
-
-```bash
-mvn compile exec:java
-```
 ## 🧪 Running Tests
 
 The project uses JUnit 5 for automated unit testing.
@@ -186,6 +168,38 @@ The automated tests cover:
 - Collision detection
 - Game state management
 - Game reset functionality
+
+## 🔄 Continuous Integration – GitHub Actions
+
+This project uses **GitHub Actions** to automatically build and test the application.
+
+The CI workflow is located at:
+
+```text
+.github/workflows/ci.yml
+```
+
+### When does it run?
+
+The workflow is triggered when:
+
+- Code is pushed to the `main` branch.
+- A pull request targeting the `main` branch is opened or updated.
+
+### What does it do?
+
+1. Checks out the repository.
+2. Sets up Java 21.
+3. Configures Maven dependency caching.
+4. Runs the Maven build and automated tests using:
+
+```bash
+mvn -B clean test
+```
+
+The workflow succeeds only when the build and tests complete successfully.
+
+The CI status badge at the top of this README displays the latest workflow status for the `main` branch.
 
 ## 🏗️ Architecture
 
