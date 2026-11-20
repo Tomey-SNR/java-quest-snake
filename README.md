@@ -1,10 +1,26 @@
 # 🐍 Java Quest – Snake Edition
 
-![Snake Quest CI](https://github.com/Tomey-SNR/java-quest-snake/actions/workflows/ci.yml/badge.svg)
+[![Snake Quest CI](https://github.com/Tomey-SNR/java-quest-snake/actions/workflows/ci.yml/badge.svg)](https://github.com/Tomey-SNR/java-quest-snake/actions/workflows/ci.yml)
 
 A classic Snake game built with **Java 21 and Java Swing**.
 
 This project demonstrates object-oriented programming, game logic implementation, graphical user interface development, and automated unit testing.
+
+## 📥 Download and Play
+
+You can download and play Java Quest – Snake Edition without cloning the repository or installing Maven.
+
+1. Open the [Releases page](https://github.com/Tomey-SNR/java-quest-snake/releases).
+2. Download the latest `Java-Quest-Snake-Windows.zip` file.
+3. Extract the ZIP archive.
+4. Open the extracted folder.
+5. Double-click `Java Quest Snake.exe`.
+
+**Requirements:**
+- Windows 10 or newer.
+- No separate Java installation required when using the packaged application.
+
+The Windows distribution includes the application and its Java runtime.
 
 ## 🎮 Features
 
@@ -107,9 +123,9 @@ java-quest-snake/
 └── README.md
 ```
 
-## ⚙️ Requirements
+## 🧑‍💻 Development Setup
 
-Before running the project, make sure you have:
+To build and run the application from source code, you need:
 
 - JDK 21 or newer
 - Apache Maven
@@ -121,8 +137,6 @@ Verify your installations:
 java -version
 mvn -version
 ```
-
-## 🚀 Getting Started
 
 ### 1. Clone the repository
 
@@ -136,13 +150,17 @@ git clone https://github.com/Tomey-SNR/java-quest-snake.git
 cd java-quest-snake
 ```
 
-### 3. Run the application
+### 3. Build the application
 
 ```bash
-mvn compile exec:java
+mvn clean package
 ```
 
-The `compile` goal compiles the project before the application starts. This is useful when running the project for the first time or after modifying the source code.
+### 4. Run the application
+
+```bash
+java -jar target/java-quest-snake-1.0-SNAPSHOT.jar
+```
 
 ## 🧪 Running Tests
 
@@ -200,6 +218,12 @@ mvn -B clean test
 The workflow succeeds only when the build and tests complete successfully.
 
 The CI status badge at the top of this README displays the latest workflow status for the `main` branch.
+
+## 📦 Releases
+
+Download the latest Windows version from the [GitHub Releases page](https://github.com/Tomey-SNR/java-quest-snake/releases).
+
+The downloadable ZIP contains the application and its bundled Java runtime. No separate Java installation is required.
 
 ## 🏗️ Architecture
 
